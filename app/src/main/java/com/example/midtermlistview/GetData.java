@@ -2,7 +2,8 @@ package com.example.midtermlistview;
 import android.app.Activity;
         import android.app.ProgressDialog;
         import android.content.Context;
-        import android.os.AsyncTask;
+import android.content.Intent;
+import android.os.AsyncTask;
         import android.util.Log;
         import android.view.View;
         import android.widget.AdapterView;
@@ -20,7 +21,8 @@ import android.app.Activity;
 
 
 class GetData extends AsyncTask<String,Integer,String> implements AdapterView.OnItemClickListener {
-    ArrayList RepositoryName,Ownername;
+
+    ArrayList<Data> dataArrayList =new ArrayList<>();
     ListView details;
     Context context;
     Activity activity;
@@ -37,23 +39,25 @@ class GetData extends AsyncTask<String,Integer,String> implements AdapterView.On
     @Override
     protected void onPostExecute(String s) {
 
-        RepositoryName = new ArrayList();
-        Ownername = new ArrayList();
+
         try {
             JSONArray jsonArray = new JSONArray(s);
             for(int i =0; i<jsonArray.length();i++)
             {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                String name = jsonObject.getString("name");
+                String id = jsonObject.getString("id");
+                String nodeId = jsonObject.getString("node_id");
+                String fullName = jsonObject.getString("full_name");
+                String languageUrl = jsonObject.getString("languages_url");
+                String eventsUrl = jsonObject.getString("events_url");
 
-                JSONObject ownerObject = jsonObject.getJSONObject("owner");
-                String full_name = ownerObject.getString("login");
 
-                RepositoryName.add(name);
-                Ownername.add(full_name);
+
+                dataArrayList.add(new Data(id,nodeId,fullName,languageUrl,eventsUrl));
+
             }
 
-            mylist adapter=new mylist(activity, RepositoryName, Ownername);
+            mylist adapter=new mylist(activity, dataArrayList);
             details.setAdapter(adapter);
 
         } catch (JSONException exception) {
@@ -95,6 +99,8 @@ class GetData extends AsyncTask<String,Integer,String> implements AdapterView.On
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int i, long id) {
-
+        Intent intent = new Intent(context,DataDetail.class);
+        intent.putExtra("dataDetail",dataArrayList.get(i));
+        context.startActivity(intent);
     }
 }

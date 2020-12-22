@@ -5,23 +5,36 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class mylist extends ArrayAdapter<String> {
+public class mylist extends BaseAdapter {
     private final Activity activity;
-    private final ArrayList RepositoryName;
-    private final ArrayList Ownername;
-    public mylist(Activity activity, ArrayList RepositoryName, ArrayList Ownername) {
-        super(activity, R.layout.listadapter, RepositoryName);
+    ArrayList<Data> dataArrayList ;
+    public mylist(Activity activity, ArrayList<Data> dataArrayList ) {
+        this.dataArrayList=dataArrayList;
         this.activity=activity;
-        this.RepositoryName=RepositoryName;
-        this.Ownername=Ownername;
-
 
     }
+
+    @Override
+    public int getCount() {
+        return dataArrayList.size();
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return dataArrayList.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
     public View getView(int position, View view, ViewGroup parent) {
         LayoutInflater inflater=activity.getLayoutInflater();
         View rowView=inflater.inflate(R.layout.listadapter, null,true);
@@ -29,8 +42,9 @@ public class mylist extends ArrayAdapter<String> {
         TextView titleText = (TextView) rowView.findViewById(R.id.repository);
         TextView subtitleText = (TextView) rowView.findViewById(R.id.owner);
 
-        titleText.setText(RepositoryName.get(position).toString());
-        subtitleText.setText(Ownername.get(position).toString());
+
+        titleText.setText(dataArrayList.get(position).getId());
+        subtitleText.setText(dataArrayList.get(position).getFullName());
 
         return rowView;
 
